@@ -8,6 +8,7 @@
 // 定义常量
 define('ROOT_PATH', __DIR__ . DIRECTORY_SEPARATOR);
 define('TASKS_PATH', ROOT_PATH . 'tasks' . DIRECTORY_SEPARATOR);
+define('CACHE_PATH', ROOT_PATH . 'caches' . DIRECTORY_SEPARATOR);
 
 // 引入自动加载
 include ROOT_PATH . 'vendor/autoload.php';
@@ -16,10 +17,11 @@ include ROOT_PATH . 'vendor/autoload.php';
 $configs = include ROOT_PATH . 'config.php';
 include ROOT_PATH . 'function.php';
 
-// 获取传入task 可指定执行任务
+// 获取传入task
 $param = getopt('t:');
 isset($param['t']) && $file = TASKS_PATH . ucfirst($param['t']) . '.php';
 
+// 执行任务
 if (isset($file) && is_file($file)) {
     // 单任务执行
     require $file;

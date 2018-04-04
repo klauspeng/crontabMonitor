@@ -17,9 +17,9 @@ function info($content, $level = 'info')
     if (is_array($content)) {
         foreach ($content as $item) {
             if (is_array($item)) {
-                echo $time . json_encode($item, JSON_UNESCAPED_UNICODE) . PHP_EOL;
+                echo $time . json_encode($item, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . PHP_EOL;
             } else {
-                echo $time . json_encode($content, JSON_UNESCAPED_UNICODE) . PHP_EOL;
+                echo $time . json_encode($content, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . PHP_EOL;
                 break;
             }
         }

@@ -8,7 +8,8 @@ return [
         'listLink' => [
             'https://www.huirendai.cn/invest/list/l2_otendering',
             'https://www.huirendai.cn/invest/list/l2_otendering_p2',
-        ]
+        ],
+        'money' => 3000,
     ],
 
 ];
