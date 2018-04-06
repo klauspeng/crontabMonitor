@@ -10,7 +10,7 @@ class Hrd extends \Core\TaskBase
     public function run()
     {
         // 获取1-3月列表
-        // $this->getList();
+        $this->getList();
 
         // 登陆
         $this->sign();
