@@ -19,8 +19,8 @@ return [
         'singUrl'   => 'https://www.huirendai.cn/member/json',
         // 登录账号
         'loginData' => [
-            'username'  => '18211089602',
-            'password'  => 'lp5693089',
+            'username'  => '*********',// 用户名
+            'password'  => '*********',// 密码
             'autologin' => 1,
             'logintype' => 0,
         ],

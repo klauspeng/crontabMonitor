@@ -15,7 +15,7 @@ include ROOT_PATH . 'vendor/autoload.php';
 
 // 加载配置及公共函数
 $configs = include ROOT_PATH . 'config.php';
-include ROOT_PATH . 'function.php';
+include ROOT_PATH . '/core/function.php';
 
 // 获取传入task
 $param = getopt('t:');
