@@ -7,6 +7,8 @@
  */
 class Hrd extends \Core\TaskBase
 {
+    private $signCacheKey = 'hrd_sign';
+
     public function run()
     {
         // 获取1-3月列表
@@ -65,11 +67,19 @@ class Hrd extends \Core\TaskBase
     {
         $cookieSuccess = CACHE_PATH . "hrd_cookie.tmp";
 
+        // 判断今天是否签到
+        if ($this->cache->get($this->signCacheKey)) {
+            return false;
+        }
+
         // 登陆
         $this->login($cookieSuccess);
 
         // 获取登陆信息
         $this->sginInfo($cookieSuccess);
+
+        // 去签到
+        $this->signIn($cookieSuccess);
     }
 
     /**
@@ -112,12 +122,25 @@ class Hrd extends \Core\TaskBase
         $data = json_decode($data, true);
         info('签到信息：', $data);
     }
-    
+
     /**
      * 签到
      */
-    public function signIn()
+    public function signIn($cookieSuccess)
     {
-        // todo 签到
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $this->config['singUrl']);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query(['action' => 'signin', 'theday' => 7]));
+        curl_setopt($ch, CURLOPT_COOKIEFILE, $cookieSuccess); //使用上面获取的cookies
+        $data = curl_exec($ch);
+        curl_close($ch);
+
+        $data = json_decode($data, true);
+        if ($data['code'] === '00000') {
+            $this->cache->set($this->signCacheKey, 1, strtotime('+1 day')-time());
+        }
+        info('签到结果：', $data);
     }
 }
