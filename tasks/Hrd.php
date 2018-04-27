@@ -47,7 +47,7 @@ class Hrd extends \Core\TaskBase
 
         // 筛选可投的项目
         foreach ($list as $item) {
-            if (!$this->cache->has('hrd_' . $item['id']) && $item['money'] <= $this->config['money']) {
+            if (!$this->cache->has('hrd_' . $item['id']) && $item['money'] <= $this->config['money'] && $item['money'] > 0) {
                 $mailList[] = $item;
                 $this->cache->set('hrd_' . $item['id'], $item, 3600);
             }
@@ -55,6 +55,7 @@ class Hrd extends \Core\TaskBase
 
         if (!empty($mailList)) {
             info('time to invest !', $mailList);
+            sendEmail('18211089602@139.com','有可投标的！',json_encode($mailList,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES));
         } else {
             info('no invest!', $list);
         }
