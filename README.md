@@ -14,3 +14,5 @@
 ## 使用说明
 1. 需config.php.default 改为config.php，配置好信息
 2. 根目录创建caches文件夹，并可写入
+3. 定时设置：`*/1 * * * * /path/to/php /path/to/crontabMonitor/index.php >> /path/to/log/crontabMonitor.log`
+4. 也可单次执行任务 `/path/to/php /path/to/crontabMonitor/index.php -t hrd`
