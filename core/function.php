@@ -65,3 +65,11 @@ function sendEmail($email, $title, $content)
     }
 }
 
+/**
+ * 计算当前时间到明天00:00的秒数
+ */
+function getExpireTime(){
+    $tomorrow = strtotime(date('Y-m-d',strtotime('+1 day')));
+    return $tomorrow-time();
+}
+

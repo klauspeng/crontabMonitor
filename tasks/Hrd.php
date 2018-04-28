@@ -140,7 +140,7 @@ class Hrd extends \Core\TaskBase
 
         $data = json_decode($data, true);
         if ($data['code'] === '00000') {
-            $this->cache->set($this->signCacheKey, 1, strtotime('+1 day')-time());
+            $this->cache->set($this->signCacheKey, 1, getExpireTime());
         }
         info('签到结果：', $data);
     }
