@@ -141,6 +141,13 @@ class Hrd extends \Core\TaskBase
         $data = json_decode($data, true);
         if ($data['code'] === '00000') {
             $this->cache->set($this->signCacheKey, 1, getExpireTime());
+
+            // 提醒领签到礼包
+            $info = json_decode($data['info'],true);
+            if (end($info) == 3) {
+                sendEmail('18211089602@139.com','领签到礼包了！','领签到礼包了！');
+
+            }
         }
         info('签到结果：', $data);
     }
