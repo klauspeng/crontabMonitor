@@ -55,7 +55,7 @@ class Hrd extends \Core\TaskBase
 
         if (!empty($mailList)) {
             info('time to invest !', $mailList);
-            sendEmail('18211089602@139.com','有可投标的！',json_encode($mailList,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES));
+            sendEmail('有可投标的！(' . $mailList[0]['month'] . '月标-' . $mailList[0]['money'] . ')', json_encode($mailList, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
         } else {
             info('no invest!', $list);
         }
@@ -143,10 +143,9 @@ class Hrd extends \Core\TaskBase
             $this->cache->set($this->signCacheKey, 1, getExpireTime());
 
             // 提醒领签到礼包
-            $info = json_decode($data['info'],true);
+            $info = json_decode($data['info'], true);
             if (end($info) == 3) {
-                sendEmail('18211089602@139.com','领签到礼包了！','领签到礼包了！');
-
+                sendEmail('领签到礼包了！', '领签到礼包了！');
             }
         }
         info('签到结果：', $data);

@@ -32,7 +32,7 @@ function info($info, $content = [], $level = 'info')
 }
 
 
-function sendEmail($email, $title, $content)
+function sendEmail($title, $content, $email = '')
 {
     global $configs;
     $mail = new \PHPMailer\PHPMailer\PHPMailer();
@@ -50,7 +50,12 @@ function sendEmail($email, $title, $content)
 
         //Recipients
         $mail->setFrom($configs['mail']['userName'], 'Mailer');
-        $mail->addAddress($email);               // Name is optional
+
+        if ($email) {
+            $mail->addAddress($email);
+        } else {
+            $mail->addAddress($configs['mail']['userName']);
+        }
 
         //Content
         $mail->isHTML(TRUE);                                  // Set email format to HTML

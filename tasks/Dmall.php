@@ -35,9 +35,9 @@ class Dmall extends \Core\TaskBase
         curl_close($ch);
 
         // 校验是否成功
-        if(strpos($data,'执行签到任务成功')===false){
-            sendEmail('18211089602@139.com','多点签到失败！','多点签到失败！更换签到链接！');
-        }else{
+        if (strpos($data, '执行签到任务成功') === false) {
+            sendEmail('多点签到失败！', '多点签到失败！更换签到链接！');
+        } else {
             $this->cache->set($this->signCacheKey, 1, getExpireTime());
         }
 
