@@ -54,7 +54,7 @@ function sendEmail($title, $content, $email = '')
         if ($email) {
             $mail->addAddress($email);
         } else {
-            $mail->addAddress($configs['mail']['userName']);
+            $mail->addAddress($configs['mail']['addressee']);
         }
 
         //Content
