@@ -42,4 +42,10 @@ return [
             'singUrl'   => '*********',
     ],
 
+    'zhiwang' => [
+            // 签到URL
+            'singUrl' => 'https://www.91zhiwang.com/m/activity_tasks/privilege/task?looda=true',
+            'cookie'  => '*******',// 抓取的cookie
+    ],
+
 ];
