@@ -148,6 +148,12 @@ class Hrd extends \Core\TaskBase
                 sendEmail('领签到礼包了！', '领签到礼包了！');
             }
         }
+
+        // 已签到情况
+        if ($data['code'] === '20009') {
+            $this->cache->set($this->signCacheKey, 1, getExpireTime());
+        }
+
         info('签到结果：', $data);
     }
 }
