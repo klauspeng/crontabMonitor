@@ -25,32 +25,32 @@ class Zhiwang extends \Core\TaskBase
      */
     public function signIn()
     {
-
         // 判断今天是否签到
         if ($this->cache->get($this->signCacheKey)) {
             return FALSE;
         }
 
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $this->config['singUrl']);
-        curl_setopt($ch, CURLOPT_HEADER, 0);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-        curl_setopt($ch, CURLOPT_COOKIE, $this->config['cookie']);
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, ['task_name' => 'privilege_sign']);
-        $data = curl_exec($ch);
-        curl_close($ch);
+        $cookie = str_replace(';', '&', $this->config['cookie']);
+        parse_str($cookie, $cookies);
+        $this->curl->setCookies($cookies);
+        $this->curl->post($this->config['singUrl'], ['task_name' => 'privilege_sign']);
 
-        $data = json_decode($data, TRUE);
+        if ($this->curl->error){
+            info('请求失败:',$this->curl->errorCode . ': ' . $this->curl->errorMessage);
+            return FALSE;
+        }
+
+        // 解析数据
+        $repData = stdObjectToArray($this->curl->response);
 
         // 校验是否成功
-        if ($data['status'] == 'drawed' || $data['status'] == 'success') {
+        if ($repData['status'] == 'drawed' || $repData['status'] == 'success') {
             $this->cache->set($this->signCacheKey, 1, getExpireTime());
         } else {
             sendEmail('指旺签到失败！', '指旺签到失败！更换签到链接！');
         }
 
-        info('签到结果：', $data);
+        info('签到结果：', $repData);
 
     }
 }

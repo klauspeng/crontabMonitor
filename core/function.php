@@ -9,9 +9,9 @@
 /**
  * 记录日志
  *
- * @param string $info 信息
- * @param array $content 内容，可字符串，一维数组，二维数组
- * @param string $level 级别
+ * @param string $info    信息
+ * @param array  $content 内容，可字符串，一维数组，二维数组
+ * @param string $level   级别
  */
 function info($info, $content = [], $level = 'info')
 {
@@ -35,18 +35,18 @@ function info($info, $content = [], $level = 'info')
 function sendEmail($title, $content, $email = '')
 {
     global $configs;
-    $mail = new \PHPMailer\PHPMailer\PHPMailer();
+    $mail          = new \PHPMailer\PHPMailer\PHPMailer();
     $mail->Charset = 'UTF-8';
     try {
         //Server settings
         // $mail->SMTPDebug = 2;                                 // Enable verbose debug output
         $mail->isSMTP();                                      // Set mailer to use SMTP
-        $mail->Host = $configs['mail']['host'];  // Specify main and backup SMTP servers
-        $mail->SMTPAuth = TRUE;                               // Enable SMTP authentication
-        $mail->Username = $configs['mail']['userName'];                 // SMTP username
-        $mail->Password = $configs['mail']['password'];                           // SMTP password
+        $mail->Host       = $configs['mail']['host'];  // Specify main and backup SMTP servers
+        $mail->SMTPAuth   = TRUE;                               // Enable SMTP authentication
+        $mail->Username   = $configs['mail']['userName'];                 // SMTP username
+        $mail->Password   = $configs['mail']['password'];                           // SMTP password
         $mail->SMTPSecure = 'ssl';                            // Enable TLS encryption, `ssl` also accepted
-        $mail->Port = $configs['mail']['port'];                                    // TCP port to connect to
+        $mail->Port       = $configs['mail']['port'];                                    // TCP port to connect to
 
         //Recipients
         $mail->setFrom($configs['mail']['userName'], 'Mailer');
@@ -60,7 +60,7 @@ function sendEmail($title, $content, $email = '')
         //Content
         $mail->isHTML(TRUE);                                  // Set email format to HTML
         $mail->Subject = '=?utf-8?B?' . base64_encode($title) . '?=';
-        $mail->Body = $content;
+        $mail->Body    = $content;
 
         $mail->send();
         return TRUE;
@@ -72,7 +72,9 @@ function sendEmail($title, $content, $email = '')
 
 /**
  * 计算当前时间到明天00:00的秒数
+ *
  * @param int $hour 每天几点,默认7点
+ *
  * @return  mixed
  */
 function getExpireTime($hour = 7)
@@ -81,3 +83,14 @@ function getExpireTime($hour = 7)
     return $tomorrow + $hour * 3600 - time();
 }
 
+/**
+ * stdClass Object转array
+ *
+ * @param object $stdObject
+ *
+ * @return array
+ */
+function stdObjectToArray($stdObject)
+{
+    return json_decode(json_encode($stdObject), TRUE);
+}

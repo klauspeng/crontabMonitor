@@ -14,6 +14,7 @@
 2. symfony/css-selector
 3. phpmailer/phpmailer
 4. thinkphp-FileDriver
+5. php-curl-class/php-curl-class
 
 ## 使用说明
 1. 需config.php.default 改为config.php，配置好信息

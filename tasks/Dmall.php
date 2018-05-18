@@ -26,13 +26,16 @@ class Dmall extends \Core\TaskBase
             return false;
         }
 
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $this->config['singUrl']);
-        curl_setopt($ch, CURLOPT_HEADER, 0);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        // curl_setopt ($ch, CURLOPT_COOKIE , $cookie );
-        $data = curl_exec($ch);
-        curl_close($ch);
+        $this->curl->get($this->config['singUrl']);
+
+        // 校验请求
+        if ($this->curl->error){
+            info('请求失败:',$this->curl->errorCode . ': ' . $this->curl->errorMessage);
+            return FALSE;
+        }
+
+        // 解析数据
+        $data = $this->curl->response;
 
         // 校验是否成功
         if (strpos($data, '执行签到任务成功') === false) {
