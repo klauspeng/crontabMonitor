@@ -50,7 +50,7 @@ class Zhiwang extends \Core\TaskBase
             sendEmail('指旺签到失败！', '指旺签到失败！更换签到链接！');
         }
 
-        info('签到结果：', $repData);
+        info('指旺签到结果：', $repData);
 
     }
 }

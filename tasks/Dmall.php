@@ -44,7 +44,7 @@ class Dmall extends \Core\TaskBase
             $this->cache->set($this->signCacheKey, 1, getExpireTime());
         }
 
-        info('签到结果：', $data);
+        info('多点签到结果：', $data);
 
     }
 }
