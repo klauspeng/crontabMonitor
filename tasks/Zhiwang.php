@@ -30,13 +30,15 @@ class Zhiwang extends \Core\TaskBase
             return FALSE;
         }
 
+        // 组织cookie
         $cookie = str_replace(';', '&', $this->config['cookie']);
         parse_str($cookie, $cookies);
         $this->curl->setCookies($cookies);
-        $this->curl->post($this->config['singUrl'], ['task_name' => 'privilege_sign']);
 
-        if ($this->curl->error){
-            info('请求失败:',$this->curl->errorCode . ': ' . $this->curl->errorMessage);
+        // post请求
+        $this->curl->post($this->config['singUrl'], ['task_name' => 'privilege_sign']);
+        if ($this->curl->error) {
+            info('请求失败:', $this->curl->errorCode . ': ' . $this->curl->errorMessage);
             return FALSE;
         }
 
