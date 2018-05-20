@@ -53,6 +53,7 @@ class Hrd extends \Core\TaskBase
             }
         }
 
+        // 如有可投则邮件通知
         if (!empty($mailList)) {
             info('time to invest !', $mailList);
             sendEmail('有可投标的！(' . $mailList[0]['month'] . '月标-' . $mailList[0]['money'] . ')', json_encode($mailList, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
@@ -86,23 +87,28 @@ class Hrd extends \Core\TaskBase
     /**
      * 登陆并保存cookie
      * @param string $cookieSuccess cookie保存文件
+     *
+     * @return mixed
      */
     public function login($cookieSuccess)
     {
-        $ch = curl_init();
-        // 返回结果存放在变量中，不输出
-        curl_setopt($ch, CURLOPT_URL, $this->config['loginUrl']);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 120);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($this->config['loginData']));
-        curl_setopt($ch, CURLOPT_COOKIEJAR, $cookieSuccess);//用来存放登录成功的cookie
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-        $result = curl_exec($ch);
-        curl_close($ch);
+        // 设置保存cookie文件
+        $this->curl->setCookieJar($cookieSuccess);
 
-        $result = json_decode($result, true);
-        info('登陆结果：', $result);
+        // post请求
+        $this->curl->post($this->config['loginUrl'], http_build_query($this->config['loginData']));
+
+        // 校验请求结果
+        if ($this->curl->error) {
+            info('请求失败:', $this->curl->errorCode . ': ' . $this->curl->errorMessage);
+            return FALSE;
+        }
+
+        // 获取返回
+        $result = json_decode($this->curl->response, TRUE);
+
+        info('惠人贷登陆结果：', $result);
+
     }
 
     /**
@@ -111,17 +117,16 @@ class Hrd extends \Core\TaskBase
      */
     public function sginInfo($cookieSuccess)
     {
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $this->config['singUrl']);
-        curl_setopt($ch, CURLOPT_HEADER, 0);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query(['action' => 'signinfo']));
-        curl_setopt($ch, CURLOPT_COOKIEFILE, $cookieSuccess); //使用上面获取的cookies
-        $data = curl_exec($ch);
-        curl_close($ch);
+        //使用登陆获取的cookies
+        $this->curl->setCookieFile($cookieSuccess);
 
-        $data = json_decode($data, true);
-        info('签到信息：', $data);
+        // post请求
+        $this->curl->post($this->config['singUrl'], http_build_query(['action' => 'signinfo']));
+
+        // 解析数据
+        $data = json_decode($this->curl->response, TRUE);
+
+        info('惠人贷签到信息：', $data);
     }
 
     /**
@@ -129,21 +134,20 @@ class Hrd extends \Core\TaskBase
      */
     public function signIn($cookieSuccess)
     {
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $this->config['singUrl']);
-        curl_setopt($ch, CURLOPT_HEADER, 0);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query(['action' => 'signin', 'theday' => 7]));
-        curl_setopt($ch, CURLOPT_COOKIEFILE, $cookieSuccess); //使用上面获取的cookies
-        $data = curl_exec($ch);
-        curl_close($ch);
 
-        $data = json_decode($data, true);
+        //使用登陆获取的cookies
+        $this->curl->setCookieFile($cookieSuccess);
+
+        // post请求
+        $this->curl->post($this->config['singUrl'], http_build_query(['action' => 'signin', 'theday' => 7]));
+        $data = json_decode($this->curl->response, TRUE);
+
+        // 判断签到结果
         if ($data['code'] === '00000') {
             $this->cache->set($this->signCacheKey, 1, getExpireTime());
 
             // 提醒领签到礼包
-            $info = json_decode($data['info'], true);
+            $info = json_decode($data['info'], TRUE);
             if (end($info) == 3) {
                 sendEmail('领签到礼包了！', '领签到礼包了！');
             }
