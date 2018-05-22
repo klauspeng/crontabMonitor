@@ -36,7 +36,7 @@ class Toutiao extends \Core\TaskBase
         }
 
         // 设置cookie
-        $this->curl->setCookieString($this->config['cookie']);
+        $this->curl->setCookieString($this->config['hourBoxCookie']);
 
         // post请求
         $this->curl->post($this->config['singUrl']);
@@ -92,7 +92,7 @@ class Toutiao extends \Core\TaskBase
             $this->cache->set($this->boxCacheKey, 1, $data['data']['next_treasure_time'] - time() + 2);
         }
 
-        info('今日头条签到结果：', $data);
+        info('今日头条开箱宝结果：', $data);
     }
 
 }
