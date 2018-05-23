@@ -147,8 +147,7 @@ class Hrd extends \Core\TaskBase
             $this->cache->set($this->signCacheKey, 1, getExpireTime());
 
             // 提醒领签到礼包
-            $info = json_decode($data['info'], TRUE);
-            if (end($info) == 3) {
+            if (end($data['info']) == 3) {
                 sendEmail('领签到礼包了！', '领签到礼包了！');
             }
         }
