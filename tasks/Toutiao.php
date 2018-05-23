@@ -89,7 +89,7 @@ class Toutiao extends \Core\TaskBase
 
         // 校验是否成功
         if ($data['err_no'] == 0) {
-            $this->cache->set($this->boxCacheKey, 1, $data['data']['next_treasure_time'] - time() + 2);
+            $this->cache->set($this->boxCacheKey, 1, $data['data']['next_treasure_time'] - time());
         }
 
         info('今日头条开箱宝结果：', $data);
