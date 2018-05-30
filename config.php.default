@@ -29,10 +29,7 @@ return [
         'singUrl'   => 'https://www.huirendai.cn/member/json',
         // 登录账号
         'loginData' => [
-            'username'  => '*********',// 用户名
-            'password'  => '*********',// 密码
-            'autologin' => 1,
-            'logintype' => 0,
+            'data' => '*********',// 抓取数据
         ],
     ],
 

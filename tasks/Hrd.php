@@ -77,9 +77,6 @@ class Hrd extends \Core\TaskBase
         // 登陆
         $this->login($cookieSuccess);
 
-        // 获取登陆信息
-        $this->sginInfo($cookieSuccess);
-
         // 去签到
         $this->signIn($cookieSuccess);
     }
@@ -92,19 +89,13 @@ class Hrd extends \Core\TaskBase
      */
     public function login($cookieSuccess)
     {
-        // 设置保存cookie文件
+        // 设置保存cookie文件 POST请求
         $this->curl->setCookieJar($cookieSuccess);
-
-        // post请求
         $this->curl->post($this->config['loginUrl'], http_build_query($this->config['loginData']));
-
-        // 校验请求结果
         if ($this->curl->error) {
             info('请求失败:', $this->curl->errorCode . ': ' . $this->curl->errorMessage);
             return FALSE;
         }
-
-        // 获取返回
         $result = json_decode($this->curl->response, TRUE);
 
         info('惠人贷登陆结果：', $result);
@@ -112,49 +103,22 @@ class Hrd extends \Core\TaskBase
     }
 
     /**
-     * 获取签到信息
-     * @param string $cookieSuccess 保存cookie文件
-     */
-    public function sginInfo($cookieSuccess)
-    {
-        //使用登陆获取的cookies
-        $this->curl->setCookieFile($cookieSuccess);
-
-        // post请求
-        $this->curl->post($this->config['singUrl'], http_build_query(['action' => 'signinfo']));
-
-        // 解析数据
-        $data = json_decode($this->curl->response, TRUE);
-
-        info('惠人贷签到信息：', $data);
-    }
-
-    /**
      * 签到
      */
     public function signIn($cookieSuccess)
     {
-
-        //使用登陆获取的cookies
+        // 使用登陆获取的cookies POST请求
         $this->curl->setCookieFile($cookieSuccess);
-
-        // post请求
         $this->curl->post($this->config['singUrl'], http_build_query(['action' => 'signin', 'theday' => 7]));
         $data = json_decode($this->curl->response, TRUE);
-
-        // 判断签到结果
-        if ($data['code'] === '00000') {
+        if ($data['code'] === '00000' || $data['code'] === '20009') {
+            // 缓存
             $this->cache->set($this->signCacheKey, 1, getExpireTime());
 
             // 提醒领签到礼包
-            if (end($data['info']) == 3) {
+            if (isset($data['info']) && end($data['info']) == 3) {
                 sendEmail('领签到礼包了！', '领签到礼包了！');
             }
-        }
-
-        // 已签到情况
-        if ($data['code'] === '20009') {
-            $this->cache->set($this->signCacheKey, 1, getExpireTime());
         }
 
         info('惠人贷签到结果：', $data);
