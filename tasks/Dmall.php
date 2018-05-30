@@ -26,16 +26,12 @@ class Dmall extends \Core\TaskBase
             return FALSE;
         }
 
-        // get请求
+        // GET请求
         $this->curl->get($this->config['singUrl']);
-
-        // 校验请求结果
         if ($this->curl->error) {
             info('请求失败:', $this->curl->errorCode . ': ' . $this->curl->errorMessage);
             return FALSE;
         }
-
-        // 解析数据
         $data = $this->curl->response;
 
         // 校验是否成功
