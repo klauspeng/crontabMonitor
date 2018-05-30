@@ -5,16 +5,16 @@
 
 return [
     // 邮件配置
-    'mail' => [
-        'host'     => '*********',
-        'userName' => '*********',
-        'password' => '*********',
-        'port'     => '*********',
-        'addressee'=> '******',// 收件人
+    'mail'    => [
+        'host'      => '*********',
+        'userName'  => '*********',
+        'password'  => '*********',
+        'port'      => '*********',
+        'addressee' => '******',// 收件人
     ],
 
     // 惠人贷
-    'hrd' => [
+    'hrd'     => [
         // 投资列表页
         'listLink'  => [
             'https://www.huirendai.cn/invest/list/l2_otendering',
@@ -37,25 +37,24 @@ return [
     ],
 
     // 多点
-    'dmall'  => [
-            // 签到URL
-            'singUrl'   => '*********',
+    'dmall'   => [
+        // 签到URL
+        'singUrl' => '*********',
     ],
 
     // 指旺
     'zhiwang' => [
-            // 签到URL
-            'singUrl' => 'https://www.91zhiwang.com/m/activity_tasks/privilege/task?looda=true',
-            'cookie'  => '*******',// 抓取的cookie
+        // 签到URL
+        'singUrl' => 'https://www.91zhiwang.com/m/activity_tasks/privilege/task?looda=true',
+        'cookie'  => '*******',// 抓取的cookie
     ],
 
     // 今日头条极速版
     'toutiao' => [
         // 签到URL
-        'singUrl' => 'https://i.snssdk.com/score_task/v1/task/sign_in/?****',
-        'cookie'  => '******',
+        'singUrl'    => 'https://i.snssdk.com/score_task/v1/task/sign_in/?****',
         'hourBoxUrl' => 'https://i.snssdk.com/score_task/v1/task/open_treasure_box/?*****',
-        'hourBoxCookie' => '*******',
+        'cookie'     => '******',// 抓取的cookie
     ],
 
 ];

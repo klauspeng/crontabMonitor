@@ -35,19 +35,13 @@ class Toutiao extends \Core\TaskBase
             return FALSE;
         }
 
-        // 设置cookie
-        $this->curl->setCookieString($this->config['hourBoxCookie']);
-
-        // post请求
+        // 设置cookie POST请求
+        $this->curl->setCookieString($this->config['cookie']);
         $this->curl->post($this->config['singUrl']);
-
-        // 校验请求
         if ($this->curl->error) {
             info('请求失败:', $this->curl->errorCode . ': ' . $this->curl->errorMessage);
             return FALSE;
         }
-
-        // 解析数据
         $data = stdObjectToArray($this->curl->response);
 
         // 校验是否成功
@@ -72,19 +66,13 @@ class Toutiao extends \Core\TaskBase
             return FALSE;
         }
 
-        // 设置cookie
-        $this->curl->setCookieString($this->config['hourBoxCookie']);
-
-        // post请求
+        // 设置cookie POST请求
+        $this->curl->setCookieString($this->config['cookie']);
         $this->curl->post($this->config['hourBoxUrl']);
-
-        // 校验请求
         if ($this->curl->error) {
             info('请求失败:', $this->curl->errorCode . ': ' . $this->curl->errorMessage);
             return FALSE;
         }
-
-        // 解析数据
         $data = stdObjectToArray($this->curl->response);
 
         // 校验是否成功
@@ -92,7 +80,7 @@ class Toutiao extends \Core\TaskBase
             $this->cache->set($this->boxCacheKey, 1, $data['data']['next_treasure_time'] - time());
         }
 
-        info('今日头条开箱宝结果：', $data);
+        info('今日头条开宝箱结果：', $data);
     }
 
 }
