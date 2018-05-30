@@ -30,23 +30,18 @@ class Zhiwang extends \Core\TaskBase
             return FALSE;
         }
 
-        // 组织cookie
-        $cookie = str_replace(';', '&', $this->config['cookie']);
-        parse_str($cookie, $cookies);
-        $this->curl->setCookies($cookies);
-
-        // post请求
+        // 组织cookie POST请求
+        $this->curl->setCookieString($this->config['cookie']);
         $this->curl->post($this->config['singUrl'], ['task_name' => 'privilege_sign']);
         if ($this->curl->error) {
             info('请求失败:', $this->curl->errorCode . ': ' . $this->curl->errorMessage);
             return FALSE;
         }
-
-        // 解析数据
         $repData = stdObjectToArray($this->curl->response);
 
         // 校验是否成功
         if ($repData['status'] == 'drawed' || $repData['status'] == 'success') {
+            // 缓存至明天
             $this->cache->set($this->signCacheKey, 1, getExpireTime());
         } else {
             sendEmail('指旺签到失败！', '指旺签到失败！更换签到链接！');
