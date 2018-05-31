@@ -116,7 +116,7 @@ class Hrd extends \Core\TaskBase
             $this->cache->set($this->signCacheKey, 1, getExpireTime());
 
             // 提醒领签到礼包
-            if (isset($data['info']) && end($data['info']) == 3) {
+            if (isset($data['data']['info']) && end($data['data']['info']) == 3) {
                 sendEmail('领签到礼包了！', '领签到礼包了！');
             }
         }
