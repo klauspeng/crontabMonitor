@@ -91,7 +91,7 @@ class Hrd extends \Core\TaskBase
     {
         // 设置保存cookie文件 POST请求
         $this->curl->setCookieJar($cookieSuccess);
-        $this->curl->post($this->config['loginUrl'], http_build_query($this->config['loginData']));
+        $this->curl->post($this->config['loginUrl'], $this->config['loginData']);
         if ($this->curl->error) {
             info('请求失败:', $this->curl->errorCode . ': ' . $this->curl->errorMessage);
             return FALSE;

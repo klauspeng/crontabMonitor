@@ -28,9 +28,7 @@ return [
         // 签到URL
         'singUrl'   => 'https://www.huirendai.cn/member/json',
         // 登录账号
-        'loginData' => [
-            'data' => '*********',// 抓取数据
-        ],
+        'loginData' => '*********',// 抓取数据
     ],
 
     // 多点
