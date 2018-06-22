@@ -13,11 +13,15 @@
 class Zhiwang extends \Core\TaskBase
 {
     private $signCacheKey = 'zhiwang_sign';
+    private $healthCacheKey = 'zhiwang_health';
 
     public function run()
     {
         // 签到
         $this->signIn();
+
+        // 走路赚钱
+        $this->healthInvest();
     }
 
     /**
@@ -49,5 +53,29 @@ class Zhiwang extends \Core\TaskBase
 
         info('指旺签到结果：', $repData);
 
+    }
+
+    /**
+     * 走路赚钱
+     */
+    public function healthInvest()
+    {
+        $hour = date("G");
+        if ($hour != 21 || $this->cache->get($this->signCacheKey)) {
+            return FALSE;
+        }
+
+        $url = 'https://www.91zhiwang.com/activities/health_invest/send_award?step=';
+        // 组织cookie POST请求
+        $this->curl->setCookieString($this->config['cookie']);
+        $data = stdObjectToArray($this->curl->get($url . '5000'));
+        info('指旺走路赚钱-5000-结果：', $data);
+        $data = stdObjectToArray($this->curl->get($url . '8000'));
+        info('指旺走路赚钱-8000-结果：', $data);
+        $data = stdObjectToArray($this->curl->get($url . '12000'));
+        info('指旺走路赚钱-12000-结果：', $data);
+
+        // 缓存
+        $this->cache->set($this->healthCacheKey, 1, getExpireTime());
     }
 }
