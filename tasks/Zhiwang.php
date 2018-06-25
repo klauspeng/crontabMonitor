@@ -61,7 +61,7 @@ class Zhiwang extends \Core\TaskBase
     public function healthInvest()
     {
         $hour = date("G");
-        if ($hour != 21 || $this->cache->get($this->signCacheKey)) {
+        if ($hour != 21 || $this->cache->get($this->healthCacheKey)) {
             return FALSE;
         }
 
