@@ -5,6 +5,8 @@
  * Date: 2018.04.03 21:18
  */
 
+header("Content-Type: text/html;charset=utf-8");
+
 // 定义常量
 define('ROOT_PATH', __DIR__ . DIRECTORY_SEPARATOR);
 define('TASKS_PATH', ROOT_PATH . 'tasks' . DIRECTORY_SEPARATOR);
