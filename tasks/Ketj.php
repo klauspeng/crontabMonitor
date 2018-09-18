@@ -51,11 +51,56 @@ class Ketj extends \Core\TaskBase
     public function getList()
     {
         // 配置
-        $ershoufangLink = $this->config['ershoufangLink'];
+        $ershoufangLinks = $this->config['ershoufangLink'];
+        $worker          = [];
 
-        for ($i = 1; $i <= 100; $i++) {
+        foreach ($ershoufangLinks as $ershoufangLink) {
+            //创建多线程
+            $pro             = new swoole_process(function (swoole_process $work) use ($ershoufangLink) {
+                //获取html文件
+                $content = $this->getData($ershoufangLink);
+                //写入管道
+                $work->write($content . PHP_EOL);
+            }, TRUE);
+            $pro_id          = $pro->start();
+            $worker[$pro_id] = $pro;
+        }
+
+        while (1) {
+            if (count($worker)) {
+                //进程回收
+                $ret = swoole_process::wait();
+                if ($ret) {
+                    //读取管道内容
+                    foreach ($worker as $v) {
+                        echo $v->read() . PHP_EOL;
+                    }
+                }
+            } else {
+                break;
+            }
+        }
+    }
+
+    public function getData($ershoufangLink)
+    {
+        // 获取总页数
+        do {
+            $ershoufangLinkContent = $this->curl->get($ershoufangLink);
+        } while (!$ershoufangLinkContent);
+
+        $ershoufangLinkCrawler = new \Symfony\Component\DomCrawler\Crawler($ershoufangLinkContent);
+        $totalPage             = $ershoufangLinkCrawler->filter('div.house-lst-page-box')->attr('page-data');
+        unset($ershoufangLinkCrawler);
+        $totalPage = json_decode($totalPage, TRUE);
+        $totalPage = $totalPage['totalPage'];
+
+        for ($i = 1; $i <= 3; $i++) {
             // 获取二手房首页
-            $html     = file_get_contents($ershoufangLink . "pg{$i}/");
+            do {
+                $html = $this->curl->get($ershoufangLink . "pg{$i}/");
+            } while (!$html);
+
             $crawler  = new \Symfony\Component\DomCrawler\Crawler($html);
             $pageList = $crawler->filter('div.leftContent .sellListContent li.clear')
                 ->each(function ($node, $i) {
@@ -68,59 +113,53 @@ class Ketj extends \Core\TaskBase
                     $date = date('Ymd');
 
                     // 详细页面
-                    $detail = new \Symfony\Component\DomCrawler\Crawler(file_get_contents($link));
+                    do {
+                        $detailHtml = $this->curl->get($link);
+                    } while (!$detailHtml);
+                    $detail = new \Symfony\Component\DomCrawler\Crawler($detailHtml);
 
                     return [
                         // 房源ID
-                        'hid'     => $node->filter('.unitPrice')->attr('data-hid'),
+                        'hid'        => $node->filter('.unitPrice')->attr('data-hid'),
                         // 日期
-                        'date'    => $date,
+                        'date'       => $date,
                         // 标题
-                        'title'   => $node->filter('.title a')->text(),
+                        'title'      => $node->filter('.title a')->text(),
 
                         // 单价
-                        'price'   => $node->filter('.unitPrice')->attr('data-price'),
+                        'price'      => $node->filter('.unitPrice')->attr('data-price'),
                         // 面积
-                        'acreage' => str_replace('平米', '', $detail->filter('.houseInfo .area div.mainInfo')->text()),
+                        'acreage'    => str_replace('平米', '', $detail->filter('.houseInfo .area div.mainInfo')->text()),
                         // 总价
-                        'amount'  => $node->filter('.priceInfo .totalPrice span')->text(),
-
+                        'amount'     => $node->filter('.priceInfo .totalPrice span')->text(),
+                        // 链接
                         'link'       => $link,
-
                         // 关注人数
-                        'focus'      => trim($followInfo[0]),
+                        'focus'      => str_replace('人关注', '', trim($followInfo[0])),
                         // 带看
-                        'tosee'      => trim($followInfo[1]),
+                        'tosee'      => str_replace(['次带看', '共'], '', trim($followInfo[1])),
                         // 发布
                         'publish'    => trim($followInfo[2]),
-
                         // 厅室
                         'room'       => $detail->filter('.houseInfo .room div.mainInfo')->text(),
                         // 朝向
                         'direction'  => $detail->filter('.houseInfo .type div.mainInfo')->text(),
-
                         // 行政区
                         'district'   => $detail->filter('.aroundInfo .areaName .info a')->first()->text(),
                         // 街道
                         'street'     => $detail->filter('.aroundInfo .areaName .info a')->last()->text(),
                         // 社区
                         'community'  => $detail->filter('.aroundInfo .communityName a.info')->text(),
-
                         // 楼层
                         'label'      => $detail->filter('.houseInfo .room div.subInfo')->text(),
-
                         // 电梯
                         'lift'       => str_replace('配备电梯', '', $detail->filter('#introduction .content li')->eq(11)->text()),
-
                         // 装修
                         'decoration' => str_replace('装修情况', '', $detail->filter('#introduction .content li')->eq(8)->text()),
-
                         // 梯户比例
                         'household'  => str_replace('梯户比例', '', $detail->filter('#introduction .content li')->eq(9)->text()),
-
                         // 供暖方式
                         'heating'    => str_replace('供暖方式', '', $detail->filter('#introduction .content li')->eq(10)->text()),
-
                         // 产权年限
                         'property'   => str_replace('产权年限', '', $detail->filter('#introduction .content li')->eq(12)->text()),
 
@@ -129,9 +168,8 @@ class Ketj extends \Core\TaskBase
 
             // 进行CURD操作
             Db::table('ke_tj')->insertAll($pageList);
-            echo date('H:i:s'),"第{$i}页查询成功！" . PHP_EOL;
+            echo date('H:i:s'), "第{$i}页查询成功！" . PHP_EOL;
         }
-
     }
 
 }
