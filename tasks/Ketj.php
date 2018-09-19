@@ -53,8 +53,10 @@ class Ketj extends \Core\TaskBase
         // 配置
         $ershoufangLinks = $this->config['ershoufangLink'];
         $worker          = [];
+        $desc            = [];
+        $startTime       = time();
 
-        foreach ($ershoufangLinks as $ershoufangLink) {
+        foreach ($ershoufangLinks as $key => $ershoufangLink) {
             //创建多线程
             $pro             = new swoole_process(function (swoole_process $work) use ($ershoufangLink) {
                 //获取html文件
@@ -64,21 +66,14 @@ class Ketj extends \Core\TaskBase
             }, TRUE);
             $pro_id          = $pro->start();
             $worker[$pro_id] = $pro;
+            $desc[$pro_id]   = $key;
         }
 
-        while (1) {
-            if (count($worker)) {
-                //进程回收
-                $ret = swoole_process::wait();
-                if ($ret) {
-                    //读取管道内容
-                    foreach ($worker as $v) {
-                        echo $v->read() . PHP_EOL;
-                    }
-                }
-            } else {
-                break;
-            }
+        //子进程结束必须要执行wait进行回收，否则子进程会变成僵尸进程
+        while ($ret = swoole_process::wait()) {// $ret 是个数组 code是进程退出状态码，
+            $pid  = $ret['pid'];
+            $time = (time() - $startTime) / 60;
+            echo $desc[$pid] . '查询完毕！用时：' . $time . '分。' . PHP_EOL;
         }
     }
 
@@ -95,7 +90,7 @@ class Ketj extends \Core\TaskBase
         $totalPage = json_decode($totalPage, TRUE);
         $totalPage = $totalPage['totalPage'];
 
-        for ($i = 1; $i <= 3; $i++) {
+        for ($i = 1; $i <= $totalPage; $i++) {
             // 获取二手房首页
             do {
                 $html = $this->curl->get($ershoufangLink . "pg{$i}/");
@@ -168,7 +163,6 @@ class Ketj extends \Core\TaskBase
 
             // 进行CURD操作
             Db::table('ke_tj')->insertAll($pageList);
-            echo date('H:i:s'), "第{$i}页查询成功！" . PHP_EOL;
         }
     }
 

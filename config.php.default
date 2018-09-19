@@ -52,4 +52,42 @@ return [
         'cookie'     => '******',// 抓取的cookie
     ],
 
+     // 贝壳-天津数据抓取
+    'ketj' => [
+        'ershoufangLink' => [
+            '和平'   => 'https://tj.ke.com/ershoufang/heping/',
+            '南开'   => 'https://tj.ke.com/ershoufang/nankai/',
+            '河西'   => 'https://tj.ke.com/ershoufang/hexi/',
+            '河北'   => 'https://tj.ke.com/ershoufang/hebei/',
+            '河东'   => 'https://tj.ke.com/ershoufang/hedong/',
+            '红桥'   => 'https://tj.ke.com/ershoufang/hongqiao/',
+            '西青'   => 'https://tj.ke.com/ershoufang/xiqing/',
+            '北辰'   => 'https://tj.ke.com/ershoufang/beichen/',
+            '东丽'   => 'https://tj.ke.com/ershoufang/dongli/',
+            '津南'   => 'https://tj.ke.com/ershoufang/jinnan/',
+            '塘沽'   => 'https://tj.ke.com/ershoufang/tanggu/',
+            '开发区'  => 'https://tj.ke.com/ershoufang/kaifaqutj/',
+            '武清'   => 'https://tj.ke.com/ershoufang/wuqing/',
+            '滨海新区' => 'https://tj.ke.com/ershoufang/binhaixinqu/',
+        ],
+    ],
+
+    // 我爱我家-天津数据抓取
+    'tj5i5j' => [
+        'ershoufangLink' => [
+            '南开' => 'https://tj.5i5j.com/ershoufang/nankaiqu/',
+            '河西' => 'https://tj.5i5j.com/ershoufang/hexiqu/',
+            '河北' => 'https://tj.5i5j.com/ershoufang/hebeiqu/',
+            '河东' => 'https://tj.5i5j.com/ershoufang/hedongqu/',
+            '塘沽' => 'https://tj.5i5j.com/ershoufang/tangguqu/',
+            '红桥' => 'https://tj.5i5j.com/ershoufang/hongqiaoqu/',
+            '和平' => 'https://tj.5i5j.com/ershoufang/hepingqu/',
+            '西青' => 'https://tj.5i5j.com/ershoufang/xiqingqu/',
+            '东丽' => 'https://tj.5i5j.com/ershoufang/dongliqu/',
+            '北辰' => 'https://tj.5i5j.com/ershoufang/beichenqu/',
+            '津南' => 'https://tj.5i5j.com/ershoufang/jinnanqu/',
+            '开发' => 'https://tj.5i5j.com/ershoufang/kaifaqu/',
+        ],
+    ],
+
 ];
