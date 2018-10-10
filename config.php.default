@@ -90,4 +90,24 @@ return [
         ],
     ],
 
+     // 天天基金
+    'tiantian' => [
+        // 签到URL
+        'singUrl' => 'https://coupontradeapi.1234567.com.cn/Point/Point/GetSignPageInfo',
+        'data'    => [
+            'CToken'        => '******',
+            'CustomerNo'    => '******',
+            'MobileKey'     => '******',
+            'UToken'        => '******',
+            'ServerVersion' => '******',
+            'uId'           => '******',
+            'plId'          => '******',
+            'refer'         => '******',
+            'activeId'      => '******',
+            'areaid'        => '******',
+            'tId'           => '******',
+            'noloading'     => '******',
+        ],
+    ],
+
 ];

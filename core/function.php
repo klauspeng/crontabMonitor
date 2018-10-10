@@ -27,7 +27,7 @@ function info($info, $content = [], $level = 'info')
             }
         }
     } else {
-        echo $content;
+        echo $content. PHP_EOL;
     }
 }
 
