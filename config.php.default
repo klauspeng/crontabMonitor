@@ -23,6 +23,8 @@ return [
     'zhiwang' => [
         // 签到URL
         'singUrl' => 'https://www.91zhiwang.com/m/activity_tasks/privilege/task?looda=true',
+        // 签到礼包URL
+        'singGiftUrl' => 'https://www.91zhiwang.com/m/activity_tasks/privilege/sign/keep?step=',
         'cookie'  => '*******',// 抓取的cookie
     ],
 

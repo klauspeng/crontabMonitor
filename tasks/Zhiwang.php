@@ -15,6 +15,8 @@ class Zhiwang extends \Core\TaskBase
     private $signCacheKey = 'zhiwang_sign';
     private $healthCacheKey = 'zhiwang_health';
 
+    private $signGiftDays = [3, 7, 15, 29];
+
     public function run()
     {
         // 签到
@@ -47,6 +49,11 @@ class Zhiwang extends \Core\TaskBase
         if ($repData['status'] == 'drawed' || $repData['status'] == 'success') {
             // 缓存至明天
             $this->cache->set($this->signCacheKey, 1, getExpireTime());
+
+            // 领礼包
+            if (in_array($repData['keepday'], $this->signGiftDays)) {
+                $this->getSignGift($repData['keepday']);
+            }
         } else {
             sendEmail('指旺签到失败！', '指旺签到失败！更换签到链接！');
         }
@@ -77,5 +84,31 @@ class Zhiwang extends \Core\TaskBase
 
         // 缓存
         $this->cache->set($this->healthCacheKey, 1, getExpireTime());
+    }
+
+
+    /**
+     * 签到礼包
+     */
+    public function getSignGift($keepday)
+    {
+        $step = array_search($keepday, $this->signGiftDays);
+
+        if ($step !== FALSE) {
+            $step++;
+
+            // 组织cookie POST请求
+            $this->curl->setCookieString($this->config['cookie']);
+            $this->curl->post($this->config['singGiftUrl'] . $step, ['task_name' => 'privilege_sign']);
+
+            if ($this->curl->error) {
+                info('签到礼包请求失败:', $this->curl->errorCode . ': ' . $this->curl->errorMessage);
+            }
+
+            $repData = stdObjectToArray($this->curl->response);
+            info('指旺签到礼包结果：', $repData);
+        }
+
+
     }
 }
