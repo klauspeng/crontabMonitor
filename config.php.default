@@ -16,7 +16,9 @@ return [
     // 多点
     'dmall'   => [
         // 签到URL
-        'singUrl' => '*********',
+        'singUrl'     => '*********',
+        'infoUrl'     => '*********',
+        'getAwardUrl' => '*********',
     ],
 
     // 指旺
