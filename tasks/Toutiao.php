@@ -49,6 +49,9 @@ class Toutiao extends \Core\TaskBase
             sendEmail('今日头条签到失败！', '今日头条签到失败！更换签到链接！');
         } else {
             $this->cache->set($this->signCacheKey, 1, getExpireTime());
+
+            // 晒收入
+            $this->shareAward();
         }
 
         info('今日头条签到结果：', $data);
@@ -81,6 +84,23 @@ class Toutiao extends \Core\TaskBase
         }
 
         info('今日头条开宝箱结果：', $data);
+    }
+
+
+    /**
+     * 晒收入
+     */
+    public function shareAward()
+    {
+        // 设置cookie POST请求
+        $this->curl->setHeader('Content-Type', 'application/json');
+        $this->curl->setCookieString($this->config['cookie']);
+
+        for ($i = 0; $i < 3; $i++) {
+            $this->curl->post($this->config['shareUrl'], ['task_id' => 100]);
+            $data = stdObjectToArray($this->curl->response);
+            info('今日头条晒收入结果：', $data);
+        }
     }
 
 }

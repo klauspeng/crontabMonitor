@@ -35,6 +35,7 @@ return [
         // 签到URL
         'singUrl'    => 'https://i.snssdk.com/score_task/v1/task/sign_in/?****',
         'hourBoxUrl' => 'https://i.snssdk.com/score_task/v1/task/open_treasure_box/?*****',
+        'shareUrl'   => 'https://i.snssdk.com/score_task/v1/task/open_treasure_box/?*****',
         'cookie'     => '******',// 抓取的cookie
     ],
 
