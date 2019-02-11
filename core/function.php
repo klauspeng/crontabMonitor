@@ -8,7 +8,6 @@
 
 /**
  * 记录日志
- *
  * @param string $info    信息
  * @param array  $content 内容，可字符串，一维数组，二维数组
  * @param string $level   级别
@@ -27,7 +26,7 @@ function info($info, $content = [], $level = 'info')
             }
         }
     } else {
-        echo $content. PHP_EOL;
+        echo $content . PHP_EOL;
     }
 }
 
@@ -72,9 +71,7 @@ function sendEmail($title, $content, $email = '')
 
 /**
  * 计算当前时间到明天00:00的秒数
- *
  * @param int $hour 每天几点,默认7点
- *
  * @return  mixed
  */
 function getExpireTime($hour = 7)
@@ -85,9 +82,7 @@ function getExpireTime($hour = 7)
 
 /**
  * stdClass Object转array
- *
  * @param object $stdObject
- *
  * @return array
  */
 function stdObjectToArray($stdObject)
@@ -115,4 +110,14 @@ function fakeIp()
     );
     $rand_key = mt_rand(0, 9);
     return long2ip(mt_rand($ip_long[$rand_key][0], $ip_long[$rand_key][1]));
+}
+
+/**
+ * 获取当前毫秒级时间戳
+ * @return float
+ */
+function getMillisecond()
+{
+    list($t1, $t2) = explode(' ', microtime());
+    return (float) sprintf('%.0f', (floatval($t1) + floatval($t2)) * 1000);
 }
