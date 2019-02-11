@@ -23,7 +23,7 @@ class Zhiwang extends \Core\TaskBase
         $this->signIn();
 
         // 走路赚钱
-        $this->healthInvest();
+        // $this->healthInvest();
     }
 
     /**
