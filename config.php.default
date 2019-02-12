@@ -97,4 +97,12 @@ return [
         ],
     ],
 
+    // 聊天宝 摇钱树
+    'zidanduanxin' => [
+        'treeInfoUrl'   => 'https://point.zidanduanxin.com/api/point/tree/info',
+        'treeActionUrl' => 'https://point.zidanduanxin.com/api/point/tree/action',
+        'friendInfoUrl' => 'https://point.zidanduanxin.com/api/point/tree/friends?page_size=1000&start_version=0',
+        'cookie'        => '******',
+    ],
+
 ];
