@@ -111,7 +111,7 @@ class Zidanduanxin extends \Core\TaskBase
         $this->curl->setHeader('Content-Type', 'application/json');
         $res = $this->curl->post($this->config['treeActionUrl'], $postData);
         $res = stdObjectToArray($res);
-        info("摇钱树动作($action)结果：", $res);
+        info("摇钱树动作($action-$treeId)结果：", $res);
     }
 
 }
