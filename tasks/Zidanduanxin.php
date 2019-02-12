@@ -85,7 +85,7 @@ class Zidanduanxin extends \Core\TaskBase
             if ($item['is_allow_steal']) {
                 // 收取
                 if ($this->currentTime >= $item['next_harvest_time']) {
-                    $this->treeAction('HARVEST', $item['tree_id'], $item['user_id']);
+                    $this->treeAction('STEAL', $item['tree_id'], $item['user_id']);
                 }
             }
         }
