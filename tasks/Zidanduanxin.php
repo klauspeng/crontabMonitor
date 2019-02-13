@@ -8,6 +8,7 @@
 class Zidanduanxin extends \Core\TaskBase
 {
     private $currentTime;
+    private $maxExpKey = 'zddx_max_exp';
 
     public function run()
     {
@@ -61,25 +62,28 @@ class Zidanduanxin extends \Core\TaskBase
         $this->curl->setCookieString($this->config['cookie']);
         $res = $this->curl->get($this->config['friendInfoUrl']);
         $res = stdObjectToArray($res);
+        $isMaxExpKey = $this->cache->get($this->maxExpKey);
 
         $friendList = $res['friend_list'];
 
         // 循环动作
         foreach ($friendList as $item) {
+            // 是否达到最大经验
+            if (!$isMaxExpKey){
+                // 浇水
+                if ($this->currentTime >= $item['next_watering_time']) {
+                    $this->treeAction('WATERING', $item['tree_id'], $item['user_id']);
+                }
 
-            // 浇水
-            if ($this->currentTime >= $item['next_watering_time']) {
-                $this->treeAction('WATERING', $item['tree_id'], $item['user_id']);
-            }
+                // 除虫
+                if ($this->currentTime >= $item['next_kill_bug_time']) {
+                    $this->treeAction('KILL_BUG', $item['tree_id'], $item['user_id']);
+                }
 
-            // 除虫
-            if ($this->currentTime >= $item['next_kill_bug_time']) {
-                $this->treeAction('KILL_BUG', $item['tree_id'], $item['user_id']);
-            }
-
-            // 修剪
-            if ($this->currentTime >= $item['next_prune_time']) {
-                $this->treeAction('PRUNE', $item['tree_id'], $item['user_id']);
+                // 修剪
+                if ($this->currentTime >= $item['next_prune_time']) {
+                    $this->treeAction('PRUNE', $item['tree_id'], $item['user_id']);
+                }
             }
 
             if ($item['is_allow_steal']) {
@@ -112,6 +116,13 @@ class Zidanduanxin extends \Core\TaskBase
         $res = $this->curl->post($this->config['treeActionUrl'], $postData);
         $res = stdObjectToArray($res);
         info("摇钱树动作($action-$treeId)结果：", $res);
+
+        // 是否已到最大经验
+        if ($res['effect_exp'] == 0) {
+            // 缓存至明天
+            $this->cache->set($this->maxExpKey, 1, getExpireTime());
+            info('已达到当天最大经验值');
+        }
     }
 
 }
