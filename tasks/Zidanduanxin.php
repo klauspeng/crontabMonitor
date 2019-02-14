@@ -118,7 +118,7 @@ class Zidanduanxin extends \Core\TaskBase
         info("摇钱树动作($action-$treeId)结果：", $res);
 
         // 是否已到最大经验
-        if ($res['effect_exp'] == 0) {
+        if ($res['effect_exp'] == 0 && (!$this->cache->get($this->maxExpKey))) {
             // 缓存至明天
             $this->cache->set($this->maxExpKey, 1, getExpireTime());
             info('已达到当天最大经验值');
