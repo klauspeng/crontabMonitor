@@ -15,7 +15,7 @@
 function info($info, $content = [], $level = 'info')
 {
     $time = date('Y-m-d H:i:s ') . $level . ' ';
-    echo $time . $info . PHP_EOL;
+    echo $time . $info;
     if ($content && is_array($content)) {
         foreach ($content as $item) {
             if (is_array($item)) {
@@ -25,8 +25,10 @@ function info($info, $content = [], $level = 'info')
                 break;
             }
         }
-    } else {
+    } else if (!empty($content)) {
         echo $content . PHP_EOL;
+    } else {
+        echo PHP_EOL;
     }
 }
 
