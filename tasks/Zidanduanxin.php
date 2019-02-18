@@ -121,8 +121,12 @@ class Zidanduanxin extends \Core\TaskBase
         $res = stdObjectToArray($res);
         info("摇钱树动作($action-$treeId)结果：", $res);
 
+        if (isset($res['code']) && $res['code'] == 10){
+            sendEmail('摇钱树cookie过期','摇钱树cookie过期');
+        }
+
         // 是否已到最大经验
-        if (isset($res['effect_exp']) && $res['effect_exp'] == 0 && (!$this->cache->get($this->maxExpKey))) {
+        if (!isset($res['code']) && isset($res['effect_exp']) && $res['effect_exp'] == 0 && (!$this->cache->get($this->maxExpKey))) {
             // 缓存至明天
             $this->cache->set($this->maxExpKey, 1, getExpireTime(0));
             info('已达到当天最大经验值');
