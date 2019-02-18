@@ -60,8 +60,8 @@ class Zidanduanxin extends \Core\TaskBase
     {
         // 获取
         $this->curl->setCookieString($this->config['cookie']);
-        $res = $this->curl->get($this->config['friendInfoUrl']);
-        $res = stdObjectToArray($res);
+        $res         = $this->curl->get($this->config['friendInfoUrl']);
+        $res         = stdObjectToArray($res);
         $isMaxExpKey = $this->cache->get($this->maxExpKey);
 
         $friendList = $res['friend_list'];
@@ -69,7 +69,7 @@ class Zidanduanxin extends \Core\TaskBase
         // 循环动作
         foreach ($friendList as $item) {
             // 是否达到最大经验
-            if (!$isMaxExpKey){
+            if (!$isMaxExpKey) {
                 // 浇水
                 if ($this->currentTime >= $item['next_watering_time']) {
                     $this->treeAction('WATERING', $item['tree_id'], $item['user_id']);
@@ -100,9 +100,13 @@ class Zidanduanxin extends \Core\TaskBase
      * @param      $action
      * @param      $treeId
      * @param bool $ownerId
+     * @return mixed
      */
     private function treeAction($action, $treeId, $ownerId = FALSE)
     {
+        if (!$action || !$treeId)
+            return FALSE;
+
         // 组织数据
         $postData = [
             'action'  => $action,
@@ -118,9 +122,9 @@ class Zidanduanxin extends \Core\TaskBase
         info("摇钱树动作($action-$treeId)结果：", $res);
 
         // 是否已到最大经验
-        if ($res['effect_exp'] == 0 && (!$this->cache->get($this->maxExpKey))) {
+        if (isset($res['effect_exp']) && $res['effect_exp'] == 0 && (!$this->cache->get($this->maxExpKey))) {
             // 缓存至明天
-            $this->cache->set($this->maxExpKey, 1, getExpireTime());
+            $this->cache->set($this->maxExpKey, 1, getExpireTime(0));
             info('已达到当天最大经验值');
         }
     }
