@@ -105,4 +105,9 @@ return [
         'cookie'        => '******',
     ],
 
+    // 上海黄金交易所
+    'gold'         => [
+        'infoUrl' => 'https://www.sge.com.cn/hqsj',
+    ],
+
 ];
