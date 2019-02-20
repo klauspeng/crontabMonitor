@@ -30,6 +30,8 @@ class Gold extends TaskBase
         if ($goldPrice <= $this->minGoldPrice) {
             sendEmail('可以买黄金了_' . $goldPrice, '可以买黄金了。当前价格' . $goldPrice);
         }
+
+        info('黄金价格：', $goldPrice);
     }
 
 }
