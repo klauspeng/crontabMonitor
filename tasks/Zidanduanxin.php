@@ -10,6 +10,9 @@ class Zidanduanxin extends \Core\TaskBase
     private $currentTime;
     private $maxExpKey = 'zddx_max_exp';
 
+    private $currentReqCount = 0;
+    private $reqLimit = 50;
+
     public function run()
     {
         // 当前时间
@@ -68,6 +71,12 @@ class Zidanduanxin extends \Core\TaskBase
 
         // 循环动作
         foreach ($friendList as $item) {
+
+            if ($this->currentReqCount >= $this->reqLimit){
+                info('请求受限');
+                return FALSE;
+            }
+
             // 是否达到最大经验
             if (!$isMaxExpKey) {
                 // 浇水
@@ -131,6 +140,8 @@ class Zidanduanxin extends \Core\TaskBase
             $this->cache->set($this->maxExpKey, 1, getExpireTime(0));
             info('已达到当天最大经验值');
         }
+
+        $this->currentReqCount ++;
     }
 
 }
