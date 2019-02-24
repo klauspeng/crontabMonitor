@@ -12,8 +12,11 @@ class Zidanduanxin extends \Core\TaskBase
     private $maxGoldKey = 'zddx_max_gold';
     private $maxReqKey = 'zddx_max_req';
     private $signCacheKey = 'zidanduanxin_sign';
+    private $propCacheKey = 'zddx_prop';
     private $currentReqCount = 0;
     private $reqLimit = 50;
+    private $maxPropUse = 100;
+
 
     public function run()
     {
@@ -28,6 +31,8 @@ class Zidanduanxin extends \Core\TaskBase
 
         // 签到
         $this->sign();
+
+        // $this->shua(['ds'=>111]);
     }
 
     /**
@@ -42,7 +47,8 @@ class Zidanduanxin extends \Core\TaskBase
 
         // 收取
         if ($this->currentTime >= $res['next_harvest_time']) {
-            $this->treeAction('HARVEST', $res['tree_id']);
+            $res = $this->treeAction('HARVEST', $res['tree_id']);
+            $this->shua($res);
         }
 
         // 浇水
@@ -83,7 +89,7 @@ class Zidanduanxin extends \Core\TaskBase
                 return FALSE;
             }
 
-            if ($this->cache->get($this->maxReqKey)){
+            if ($this->cache->get($this->maxReqKey)) {
                 info('请求受限2');
                 return FALSE;
             }
@@ -124,9 +130,11 @@ class Zidanduanxin extends \Core\TaskBase
 
     /**
      * 摇钱树动作
+     *
      * @param      $action
      * @param      $treeId
      * @param bool $ownerId
+     *
      * @return mixed
      */
     private function treeAction($action, $treeId, $ownerId = FALSE)
@@ -161,7 +169,7 @@ class Zidanduanxin extends \Core\TaskBase
 
         $this->currentReqCount++;
 
-        return  $res;
+        return $res;
     }
 
 
@@ -186,12 +194,54 @@ class Zidanduanxin extends \Core\TaskBase
         if (!isset($res['code'])) {
             // 缓存至明天
             $this->cache->set($this->signCacheKey, 1, getExpireTime());
-        }
-        else {
+        } else {
             sendEmail('聊天宝签到失败！', '聊天宝签到失败！更换签到链接！');
         }
 
         info('聊天宝签到结果：', $repData);
+    }
+
+    /**
+     * 刷化肥
+     * @param $res
+     * @return bool
+     */
+    public function shua($res)
+    {
+        if (!isset($res['code'])) {
+            $today     = date('Ymd');
+            $propCache = $this->cache->get($this->propCacheKey);
+            if ($propCache) {
+                list($date, $count) = explode('_', $propCache);
+                if ($date != $today) {
+                    $propCache = $today . '_0';
+                }
+
+                if ($count >= $this->maxPropUse) {
+                    info('刷：', '已到化肥使用最大值');
+                    return FALSE;
+                }
+            } else {
+                $propCache = $today . '_0';
+            }
+
+            for ($i=0;$i<3;$i++){
+                // 购买化肥
+                $this->curl->setCookieString($this->config['cookie']);
+                $this->curl->setHeader('Content-Type', 'application/json');
+                $buyProp = $this->curl->post($this->config['buyPropUrl'], ['prop_id' => 30, 'count' => 1]);
+                info('购买化肥：', stdObjectToArray($buyProp));
+
+                // 使用化肥
+                $useProp = $this->curl->post($this->config['usePropUrl'], ['prop_id' => 30, 'owner_id' => '33464425', 'tree_id' => '1035321']);
+                info('使用化肥：', stdObjectToArray($useProp));
+            }
+
+            list($date, $count) = explode('_', $propCache);
+            $count = $count + 3;
+            info('当前化肥使用量:', $today . '_' . $count);
+            $this->cache->set($this->propCacheKey, $today . '_' . $count);
+        }
     }
 
 }
