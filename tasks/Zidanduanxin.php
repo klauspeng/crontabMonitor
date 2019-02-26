@@ -225,7 +225,7 @@ class Zidanduanxin extends \Core\TaskBase
                 $propCache = $today . '_0';
             }
 
-            for ($i=0;$i<3;$i++){
+            for ($i = 0; $i < 3; $i++) {
                 // 购买化肥
                 $this->curl->setCookieString($this->config['cookie']);
                 $this->curl->setHeader('Content-Type', 'application/json');
@@ -240,7 +240,7 @@ class Zidanduanxin extends \Core\TaskBase
             list($date, $count) = explode('_', $propCache);
             $count = $count + 3;
             info('当前化肥使用量:', $today . '_' . $count);
-            $this->cache->set($this->propCacheKey, $today . '_' . $count);
+            $this->cache->set($this->propCacheKey, $today . '_' . $count, getExpireTime(0));
         }
     }
 
