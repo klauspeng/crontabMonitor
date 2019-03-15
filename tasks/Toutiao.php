@@ -15,6 +15,7 @@ class Toutiao extends \Core\TaskBase
     private $signCacheKey = 'toutiao_sign';
     private $boxCacheKey = 'toutiao_hour_box';
     private $shareCacheKey = 'toutiao_share';
+    private $searchCacheKey = 'toutiao_search';
 
     public function run()
     {
@@ -26,6 +27,10 @@ class Toutiao extends \Core\TaskBase
 
         // 晒收入
         $this->shareAward();
+
+        // 搜索奖励
+        $this->searchAward();
+
     }
 
     /**
@@ -56,6 +61,8 @@ class Toutiao extends \Core\TaskBase
 
         info('今日头条签到结果：', $data);
 
+        // 账户监控
+        $this->userInfo();
     }
 
     /**
@@ -106,6 +113,59 @@ class Toutiao extends \Core\TaskBase
         }
 
         $this->cache->set($this->shareCacheKey, 1, getExpireTime());
+    }
+
+
+    /**
+     * 搜索
+     */
+    public function searchAward()
+    {
+        // 判断今天是否搜索
+        if ($this->cache->get($this->searchCacheKey)) {
+            return FALSE;
+        }
+
+        // 设置cookie
+        $this->curl->setCookieString($this->config['cookie']);
+        $res = $this->curl->get($this->config['searchSugUrl']);
+        $res = stdObjectToArray($res);
+        $count = 0;
+
+        for ($i = 0; $i < count($res['data']['suggest_words']); $i++) {
+            $this->curl->setCookieString($this->config['cookie']);
+            $data = $this->curl->get($this->config['searchUrl'] . urlencode($res['data']['suggest_words'][$i]));
+            $data = stdObjectToArray($data);
+            if (isset($data['keyword'])){
+                info('今日头条搜索结果：', $data['keyword']);
+                $count++;
+                info('今日头条搜索次数：', $count);
+            }
+        }
+
+        if ($count >= 5){
+            $this->cache->set($this->searchCacheKey, 1, getExpireTime());
+        }
+    }
+
+    /**
+     * 获取信息
+     */
+    public function userInfo()
+    {
+        $this->curl->setCookieString($this->config['cookie']);
+        $data = $this->curl->get($this->config['userInfoUrl']);
+        $data = stdObjectToArray($data);
+
+        if (empty($data['data']['cash']['amount'])){
+            sendEmail('头条cookie失效','头条cookie失效，请重置！');
+        }
+
+        info('头条目前金额'.$data['data']['cash']['amount']);
+
+        if ($data['data']['cash']['amount'] >= 15){
+            sendEmail('头条该体现了！','头条体现了，金额'.$data['data']['cash']['amount']);
+        }
     }
 
 }
