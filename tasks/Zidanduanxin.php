@@ -14,8 +14,8 @@ class Zidanduanxin extends \Core\TaskBase
     private $signCacheKey = 'zidanduanxin_sign';
     private $propCacheKey = 'zddx_prop';
     private $currentReqCount = 0;
-    private $reqLimit = 50;
-    private $maxPropUse = 100;
+    private $reqLimit = 40;
+    private $maxPropUse = 99;
 
 
     public function run()
@@ -225,20 +225,31 @@ class Zidanduanxin extends \Core\TaskBase
                 $propCache = $today . '_0';
             }
 
-            for ($i = 0; $i < 3; $i++) {
-                // 购买化肥
-                $this->curl->setCookieString($this->config['cookie']);
-                $this->curl->setHeader('Content-Type', 'application/json');
-                $buyProp = $this->curl->post($this->config['buyPropUrl'], ['prop_id' => 30, 'count' => 1]);
-                info('购买化肥：', stdObjectToArray($buyProp));
+            $propArr = [30,30,31];
+            list($date, $count) = explode('_', $propCache);
+            // 刷11次
+            for($j=0;$j<11;$j++){
+                if ($count >= $this->maxPropUse){
+                    break;
+                }
 
-                // 使用化肥
-                $useProp = $this->curl->post($this->config['usePropUrl'], ['prop_id' => 30, 'owner_id' => '33464425', 'tree_id' => '1035321']);
-                info('使用化肥：', stdObjectToArray($useProp));
+                // 每次3个化肥
+                for ($i=0;$i<3;$i++){
+                    // 购买化肥
+                    $this->curl->setCookieString($this->config['cookie']);
+                    $this->curl->setHeader('Content-Type', 'application/json');
+                    $buyProp = $this->curl->post($this->config['buyPropUrl'], ['prop_id' => $propArr[$i], 'count' => 1]);
+                    info('购买化肥：', stdObjectToArray($buyProp));
+
+                    // 使用化肥
+                    $useProp = $this->curl->post($this->config['usePropUrl'], ['prop_id' => $propArr[$i], 'owner_id' => '33464425', 'tree_id' => '1035321']);
+                    info('使用化肥：', stdObjectToArray($useProp));
+                    $count++;
+                }
+                // 收取
+                $this->treeAction('HARVEST', $res['tree_id']);
             }
 
-            list($date, $count) = explode('_', $propCache);
-            $count = $count + 3;
             info('当前化肥使用量:', $today . '_' . $count);
             $this->cache->set($this->propCacheKey, $today . '_' . $count, getExpireTime(0));
         }
