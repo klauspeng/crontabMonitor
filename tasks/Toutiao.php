@@ -19,6 +19,9 @@ class Toutiao extends \Core\TaskBase
 
     public function run()
     {
+        // 初始化
+        $this->init();
+
         // 签到
         $this->signIn();
 
@@ -31,6 +34,14 @@ class Toutiao extends \Core\TaskBase
         // 搜索奖励
         $this->searchAward();
 
+    }
+
+    public function init()
+    {
+        $this->signCacheKey .= $this->index;
+        $this->boxCacheKey .= $this->index;
+        $this->searchCacheKey .= $this->index;
+        $this->shareCacheKey .= $this->index;
     }
 
     /**
@@ -47,7 +58,7 @@ class Toutiao extends \Core\TaskBase
         $this->curl->setCookieString($this->config['cookie']);
         $this->curl->post($this->config['singUrl']);
         if ($this->curl->error) {
-            info('请求失败:', $this->curl->errorCode . ': ' . $this->curl->errorMessage);
+            info($this->index.'请求失败:', $this->curl->errorCode . ': ' . $this->curl->errorMessage);
             return FALSE;
         }
         $data = stdObjectToArray($this->curl->response);
@@ -59,10 +70,10 @@ class Toutiao extends \Core\TaskBase
             $this->cache->set($this->signCacheKey, 1, getExpireTime());
         }
 
-        info('今日头条签到结果：', $data);
+        info($this->index.'今日头条签到结果：', $data);
 
         // 账户监控
-        $this->userInfo();
+        // $this->userInfo();
     }
 
     /**
@@ -79,7 +90,7 @@ class Toutiao extends \Core\TaskBase
         $this->curl->setCookieString($this->config['cookie']);
         $this->curl->post($this->config['hourBoxUrl']);
         if ($this->curl->error) {
-            info('请求失败:', $this->curl->errorCode . ': ' . $this->curl->errorMessage);
+            info($this->index.'请求失败:', $this->curl->errorCode . ': ' . $this->curl->errorMessage);
             return FALSE;
         }
         $data = stdObjectToArray($this->curl->response);
@@ -89,7 +100,7 @@ class Toutiao extends \Core\TaskBase
             $this->cache->set($this->boxCacheKey, 1, $data['data']['next_treasure_time'] - $data['data']['current_time']);
         }
 
-        info('今日头条开宝箱结果：', $data);
+        info($this->index.'今日头条开宝箱结果：', $data);
     }
 
     /**
@@ -109,7 +120,7 @@ class Toutiao extends \Core\TaskBase
         for ($i = 0; $i < 3; $i++) {
             $this->curl->post($this->config['shareUrl'], ['task_id' => 100]);
             $data = stdObjectToArray($this->curl->response);
-            info('今日头条晒收入结果：', $data);
+            info($this->index.'今日头条晒收入结果：', $data);
         }
 
         $this->cache->set($this->shareCacheKey, 1, getExpireTime());
@@ -137,9 +148,9 @@ class Toutiao extends \Core\TaskBase
             $data = $this->curl->get($this->config['searchUrl'] . urlencode($res['data']['suggest_words'][$i]));
             $data = stdObjectToArray($data);
             if (isset($data['keyword'])){
-                info('今日头条搜索结果：', $data['keyword']);
+                info($this->index.'今日头条搜索结果：', $data['keyword']);
                 $count++;
-                info('今日头条搜索次数：', $count);
+                info($this->index.'今日头条搜索次数：', $count);
             }
         }
 
@@ -161,7 +172,7 @@ class Toutiao extends \Core\TaskBase
             sendEmail('头条cookie失效','头条cookie失效，请重置！');
         }
 
-        info('头条目前金额'.$data['data']['cash']['amount']);
+        info($this->index.'头条目前金额'.$data['data']['cash']['amount']);
 
         if ($data['data']['cash']['amount'] >= 15){
             sendEmail('头条该体现了！','头条体现了，金额'.$data['data']['cash']['amount']);

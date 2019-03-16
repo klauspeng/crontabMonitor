@@ -23,6 +23,12 @@ class Zidanduanxin extends \Core\TaskBase
         // 当前时间
         $this->currentTime = getMillisecond();
 
+        $this->maxExpKey .= $this->index;
+        $this->maxGoldKey .= $this->index;
+        $this->maxReqKey .= $this->index;
+        $this->signCacheKey .= $this->index;
+        $this->propCacheKey .= $this->index;
+
         // 获取我的摇钱树信息
         $this->getMyTreeInfo();
 

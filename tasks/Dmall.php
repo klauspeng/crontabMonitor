@@ -11,6 +11,7 @@ class Dmall extends \Core\TaskBase
 
     public function run()
     {
+        $this->signCacheKey .= $this->index;
         // 签到
         $this->signIn();
     }

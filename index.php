@@ -30,8 +30,14 @@ if (isset($file) && is_file($file)) {
     require $file;
     $config = [];
     isset($configs[$param['t']]) && $config = $configs[$param['t']];
-    $taskObject = new $param['t']($config);
-    $taskObject->run();
+    foreach ($config as $key=>$item) {
+        try{
+            $taskObject = new $param['t']($item,$key);
+            $taskObject->run();
+        }catch (Exception $e){
+            info('程序异常',$e->getMessage());
+        }
+    }
 } else {
     // 所有任务执行
     $tasks = array_diff(scandir(TASKS_PATH), array('..', '.'));
@@ -42,7 +48,13 @@ if (isset($file) && is_file($file)) {
             continue;
         }
         $config = isset($configs[lcfirst($class)]) ? $configs[lcfirst($class)] : [];
-        $taskObject = new $class($config);
-        $taskObject->run();
+        foreach ($config as $key=> $item) {
+            try{
+                $taskObject = new $class($item,$key);
+                $taskObject->run();
+            }catch (Exception $e){
+                info('程序异常',$e->getMessage());
+            }
+        }
     }
 }

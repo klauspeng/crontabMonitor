@@ -18,17 +18,23 @@ abstract class TaskBase
     protected $cache = null;
     // curl类
     protected $curl = null;
+    protected $index;
 
     /**
      * TaskBase constructor.
      *
      * @param array $config 运行所需配置
+     * @param int $index
+     *
+     * @throws \ErrorException
      */
-    public function __construct($config)
+    public function __construct($config, $index = 0)
     {
         $this->config = $config;
         $this->cache  = new FileCache();
         $this->curl   = new Curl();
+        $this->index = $index;
+
     }
 
     /**
