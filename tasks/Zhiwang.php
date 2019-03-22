@@ -16,6 +16,7 @@ class Zhiwang extends \Core\TaskBase
     private $healthCacheKey = 'zhiwang_health';
 
     private $signGiftDays = [3, 7, 15, 29];
+    private $remindScore = 50000;
 
     public function run()
     {
@@ -24,6 +25,7 @@ class Zhiwang extends \Core\TaskBase
 
         // 走路赚钱
         // $this->healthInvest();
+
     }
 
     /**
@@ -57,6 +59,9 @@ class Zhiwang extends \Core\TaskBase
         } else {
             sendEmail('指旺签到失败！', '指旺签到失败！更换签到链接！');
         }
+
+        // 兑换提醒
+        $this->exchangeGift();
 
         info('指旺签到结果：', $repData);
 
@@ -110,5 +115,19 @@ class Zhiwang extends \Core\TaskBase
         }
 
 
+    }
+
+    /**
+     * 兑换物品提醒
+     */
+    public function exchangeGift()
+    {
+        // 组织cookie
+        $this->curl->setCookieString($this->config['cookie']);
+        $data = $this->curl->get($this->config['exchangeGiftUrl']);
+        info(json_encode($data));
+        if (isset($data['total']) && $data['total'] >= $this->remindScore) {
+            sendEmail('指旺可兑换了！' . $data['total'], '指旺可兑换了！');
+        }
     }
 }
