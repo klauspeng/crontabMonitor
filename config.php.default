@@ -110,4 +110,13 @@ return [
         'infoUrl' => 'https://www.sge.com.cn/hqsj',
     ],
 
+    // 当当
+    'dangdang'     => [
+        [
+            'signUrl'     => 'https://hb.dangdang.com/mdd/points.php?action=sign_in',
+            'flipCardUrl' => 'https://hb.dangdang.com/mdd/points.php?action=flop&pit=0',
+            'cookie'      => '******',
+        ],
+    ],
+
 ];
