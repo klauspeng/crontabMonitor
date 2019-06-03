@@ -21,7 +21,7 @@ class Zhiwang extends \Core\TaskBase
     public function run()
     {
         // 签到
-        $this->signIn();
+        // $this->signIn();
 
         // 走路赚钱
         // $this->healthInvest();
