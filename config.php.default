@@ -21,15 +21,6 @@ return [
         'getAwardUrl' => '*********',
     ],
 
-    // 指旺
-    'zhiwang' => [
-        // 签到URL
-        'singUrl' => 'https://www.91zhiwang.com/m/activity_tasks/privilege/task?looda=true',
-        // 签到礼包URL
-        'singGiftUrl' => 'https://www.91zhiwang.com/m/activity_tasks/privilege/sign/keep?step=',
-        'cookie'  => '*******',// 抓取的cookie
-    ],
-
     // 今日头条极速版
     'toutiao' => [
         // 签到URL
@@ -95,14 +86,6 @@ return [
             'tId'           => '******',
             'noloading'     => '******',
         ],
-    ],
-
-    // 聊天宝 摇钱树
-    'zidanduanxin' => [
-        'treeInfoUrl'   => 'https://point.zidanduanxin.com/api/point/tree/info',
-        'treeActionUrl' => 'https://point.zidanduanxin.com/api/point/tree/action',
-        'friendInfoUrl' => 'https://point.zidanduanxin.com/api/point/tree/friends?page_size=1000&start_version=0',
-        'cookie'        => '******',
     ],
 
     // 上海黄金交易所

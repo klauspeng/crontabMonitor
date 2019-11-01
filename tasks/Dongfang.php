@@ -14,6 +14,10 @@ class Dongfang extends TaskBase
 
     public function run()
     {
+        // key
+        $this->hourCacheKey .= $this->index;
+        $this->treeCacheKey .= $this->index;
+
         $this->getHourAward();
         $this->getTreeAward();
     }
@@ -25,12 +29,12 @@ class Dongfang extends TaskBase
     {
         // 判断今天是否获取
         if ($this->cache->get($this->hourCacheKey)) {
-            return FALSE;
+            return false;
         }
 
         $info = $this->curl->post($this->config['hourAward'], $this->config['hourAwardData']);
         $info = stdObjectToArray($info);
-        info('东方头条时段奖励：', $info['data']);
+        info($this->index . '东方头条时段奖励：', $info['data']);
         $this->cache->set($this->hourCacheKey, 1, 3600);
     }
 
@@ -41,12 +45,12 @@ class Dongfang extends TaskBase
     {
         // 判断今天是否获取
         if ($this->cache->get($this->treeCacheKey)) {
-            return FALSE;
+            return false;
         }
 
         $info = $this->curl->post($this->config['treeAward'], $this->config['treeAwardData']);
         $info = stdObjectToArray($info);
-        info('东方头条摇钱树奖励：', $info['data']);
+        info($this->index . '东方头条摇钱树奖励：', $info['data']);
         $this->cache->set($this->treeCacheKey, 1, $info['data']['remaining_time']);
     }
 
